@@ -10,8 +10,8 @@ groundtruth = cv2.imread('groundtruth.png').astype(np.float32) / 255.0
 groundtruth = groundtruth[:, :, 0]
 
 # Determine the foreground, background, and unknown pixels in trimap by the fixed thresholds which are obtained from observing the trimap matrix.
-foreg = trimap > 50
-backg = trimap < 1
+foreg = trimap > 0.9
+backg = trimap < 0.45
 # Determine unknown pixels in the grey area in trimap
 unkwn = ~(foreg | backg)
 
@@ -33,6 +33,7 @@ for i in range(channel): # Get the alpha matte for each channel
 alpha = 1 - np.sqrt(alpha / channel)
 alpha[backg[:, :, 0]] = 0 # Set alpha of the background pixels as 0
 alpha[foreg[:, :, 0]] = 1 # Set alpha of the foreground pixels as 1
+alpha[(alpha >= 0.9) & (alpha <= 0.95)] = 1
 
 # Use this alpha matte to process the input image then get the final laplacian matting result, then save the output alpha matte and matting result as a .png format image.
 outimg = alpha[..., np.newaxis] * img
