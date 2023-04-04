@@ -4,7 +4,6 @@ from PIL import Image, ImageOps
 import matplotlib.pyplot as plt
 import cv2
 import os
-os.system('cls')
 # orchard_bouman_clust.py should be in the folder
 from orchard_bouman_clust import clustFunc
 from General_lib import *
@@ -15,6 +14,7 @@ from calculation import *
 name = "GT12"
 save_name_origin = "ORI.png"
 save_name_sharpen ="Sharpen.png"
+save_name_composite = "Comp.png"
 # Reading the image and trimap
 os.path.join("data","gt_training_lowres","{}.png".format(name))
 image = np.array(Image.open(os.path.join("data","input_training_lowres","{}.png".format(name))))
@@ -46,12 +46,14 @@ alpha_int8 = np.array(alpha,dtype = int)
 plt.imsave("{}_alpha.png".format(name), alpha, cmap='gray')
 cv2.imwrite(save_name_origin, alpha)
 cv2.imwrite(save_name_sharpen, unsharped_alpha)
+
 print(np.mean(alpha))
 print(np.mean(unsharped_alpha))
 show_im(alpha)
 show_im(unsharped_alpha)
 background = cv2.imread('universe.jpg')
 comp_img = compositing(image,alpha,background)
+plt.imsave("{}_compsite_img.png".format(name), comp_img)
 plt.imshow(comp_img)
 plt.show()
 
