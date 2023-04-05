@@ -85,7 +85,7 @@ print("MSE of Unsharpend Baysian matting: ", mse_unsharpend)
 print("MSE of Laplacian matting: ", mse_lap)
 
 # PSNR (Peak Signal-to-Noise Ratio) calculation
-MAX = 255
+MAX = 1
 # Calculate PSNR
 psnr_ori = 10 * np.log10(MAX**2 / mse_original)
 psnr_unshp = 10 * np.log10(MAX**2 / mse_unsharpend)
