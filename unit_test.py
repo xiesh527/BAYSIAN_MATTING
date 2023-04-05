@@ -79,9 +79,5 @@ class test_Orchard_Bouman(unittest.TestCase):
                                     [6.3, 6.3, 6.30001]])
         np.testing.assert_array_almost_equal(covar, expected_covar, decimal=5)
 
-class test_EM(unittest.TestCase):
-    def test_EM(self):
-        pass
-
 if __name__ == '__main__':
     unittest.main()

@@ -1,8 +1,9 @@
 import cv2
 import numpy as np
+from General_lib import compositing
 
 def lap(img, trimap):
-# Input the image and its trimap and get them to float32 format and divide them by 255 for the matting process below 
+# Input the image and trimap
   img = img.astype(np.float32) / 255.0
   trimap = trimap.astype(np.float32) / 255.0
 
@@ -42,7 +43,8 @@ def lap(img, trimap):
   alpha_3[ :, :, 2] = alpha_1
 
 # Use this alpha matte to process the input image then get the final laplacian matting result, then save the output alpha matte and matting result as a .png format image.
-  outimg = alpha_3 * img
+  outimg = alpha_3 * img 
+  outimg = cv2.cvtColor(outimg, cv2.COLOR_BGR2RGB)
   cv2.imwrite('lap_alpha.png', (alpha_1).astype(np.uint8))
   cv2.imwrite('lap_image.png', (outimg).astype(np.uint8))
 
