@@ -32,6 +32,7 @@ def compositing(img, alpha, background):
 
     # Resizing the background image to the size of the alpha channel
     background = cv2.resize(background, (W, H))
+    background = cv2.cvtColor(background, cv2.COLOR_BGR2RGB)
 
     # Converting the images to float
     img = img / 255
