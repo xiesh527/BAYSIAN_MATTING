@@ -1,16 +1,15 @@
-import numpy as np
-from PIL import Image, ImageOps
-import matplotlib.pyplot as plt
 import cv2
-import os
-os.system('cls')
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import signal
+
 # orchard_bouman_clust.py should be in the folder
-from orchard_bouman_clust import clustFunc
+from orchard_bouman_clust import clustOBouman
 
 ## Some important helper functions
 
 # This function displays the image.
-def show_im(img):
+def disp_img(img):
     """
     img - input image should be a numpy array.
     """
@@ -158,49 +157,47 @@ def Calc(mu_F,Sigma_F,mu_B,Sigma_B,C,sigma_C,alpha_0, maxCount, minLike):
 
 
 def Bayesian_Matte(img,image_trimap,N = 25,sig = 8,minNeighbours = 10):
-    '''
-    img - input image that the user will give to perform the foreground-background mapping
-    trimap - the alpha mapping that is given with foreground and background determined.
-    N - Window size, determines how many pixels will be sampled around the pixel to be solved, should be always odd.
-    sig - wieghts of the neighbouring pixels. less means more centered.
-    minNeighbours - Neigbour pixels available to solve, should be greater than 0, else inverse wont be calculated
-    '''
     
-    # We Convert the Images to float so that we are able to play with the pixel values
+    
+    #We Convert the Images to float so that we are able to play with the pixel values
     img = np.array(img,dtype = 'float')
     trimap = np.array(image_trimap, dtype = 'float')
     
-    # Here we normalise the Images to range from 0 and 1.
+    #normalise the Images to range from 0 and 1.
     img /= 255
     trimap /= 255
 
-    # We get the dimensions 
+    #get the dimensions 
     h,w,c = img.shape
     
-    # Preparing the gaussian weights for window
-    gaussian_weights = matlab_style_gauss2d((N,N),sig)
-    gaussian_weights /= np.max(gaussian_weights)
+    kernel_std = sig
+    kernel_size = N
+    kernel_2d = np.outer(signal.gaussian(kernel_size, std=kernel_std), signal.gaussian(kernel_size, std=kernel_std))
+    kernel_2d /= np.max(kernel_2d)
+    gaussian_weights = np.tile(kernel_2d[:, :, np.newaxis], (1, 1, c))
+    # print(np.shape(gaussian_weights))
+    gaussian_weights = gaussian_weights[:, :, 0]
+    ################################
+    
 
-    # We seperate the foreground specified in the trimap from the main image.
     fg_map = trimap == 1
     fg_actual = np.zeros((h,w,c))
     fg_actual = img * np.reshape(fg_map,(h,w,1))
 
-    # We seperate the background specified in the trimap from the main image. 
+    
     bg_map = trimap == 0
     bg_actual = np.zeros((h,w,c))
     bg_actual = img * np.reshape(bg_map,(h,w,1))
     
-    # Creating empty alpha channel to fill in by the program
+    
     unknown_map = np.logical_or(fg_map,bg_map) == False
     a_channel = np.zeros(unknown_map.shape)
     a_channel[fg_map] = 1
     a_channel[unknown_map] = np.nan
 
-    # Finding total number of unkown pixels to be calculated
+    
     n_unknown = np.sum(unknown_map)
 
-    # Making the datastructure for finding pixel values and saving id they have been solved yet or not.
     A,B = np.where(unknown_map == True)
     not_visited = np.vstack((A,B,np.zeros(A.shape))).T
 
@@ -212,49 +209,52 @@ def Bayesian_Matte(img,image_trimap,N = 25,sig = 8,minNeighbours = 10):
 
         # iterating for all pixels
         for i in range(n_unknown): 
-            # checking if solved or not
             if not_visited[i,2] == 1:
                 continue
             
-            # If not solved, we try to solve
+            #Solve if not solved
             else:
-                # We get the location of the unsolved pixel
+                #location of the processedpixel
                 y,x = map(int,not_visited[i,:2])
                 
-                # Creating an window which states what pixels around it are solved(forground/background)
+                #take out the window that are going to be solved
                 a_window = get_window(a_channel[:, :, np.newaxis], x, y, N)[:,:,0]
                 
-                # Creating a window and weights of solved foreground window
-                fg_window = get_window(fg_actual,x,y,N)
-                fg_weights = np.reshape(a_window**2 * gaussian_weights,-1)
-                values_to_keep = np.nan_to_num(fg_weights) > 0
-                fg_pixels = np.reshape(fg_window,(-1,3))[values_to_keep,:]
-                fg_weights = fg_weights[values_to_keep]
-        
-                # Creating a window and weights of solved background window
-                bg_window = get_window(bg_actual,x,y,N)
-                bg_weights = np.reshape((1-a_window)**2 * gaussian_weights,-1)
-                values_to_keep = np.nan_to_num(bg_weights) > 0
-                bg_pixels = np.reshape(bg_window,(-1,3))[values_to_keep,:]
-                bg_weights = bg_weights[values_to_keep]
+                #initialise the prior for EM algorithm (Calc Function)
                 
-                # We come back to this pixel later if it doesnt has enough solved pixels around it.
+                
+                fg_window = get_window(fg_actual,x,y,N)
+                fg_weights = a_window**2 * gaussian_weights 
+                
+                #Only want value > 0, intuitively weight should be > 0
+                fg_pixels = fg_window[fg_weights > 0]
+                fg_weights = fg_weights[fg_weights > 0]
+                        
+                
+                bg_window = get_window(bg_actual,x,y,N)
+                bg_weights = (1 - a_window)**2 * gaussian_weights
+                bg_pixels = bg_window[bg_weights > 0]
+                bg_weights = bg_weights[bg_weights > 0]
+                
+                # repeat this if not enough neighbors
                 if len(bg_weights) < minNeighbours or len(fg_weights) < minNeighbours:
                     continue
                 
-                # If enough pixels, we cluster these pixels to get clustered colour centers and their covariance    matrices
-                mean_fg, cov_fg = clustFunc(fg_pixels,fg_weights)
-                mean_bg, cov_bg = clustFunc(bg_pixels,bg_weights)
-                alpha_init = np.nanmean(a_window.ravel())
+                # If enough pixels, clustering to generate prior statistics for foreground and background
+                mean_fg, cov_fg = clustOBouman(fg_pixels,fg_weights)
+                mean_bg, cov_bg = clustOBouman(bg_pixels,bg_weights)
+                mask = ~np.isnan(a_window)
+                alpha_init = np.mean(a_window[mask])
                 
                 # We try to solve our 3 equation 7 variable problem with minimum likelihood estimation
                 fg_pred,bg_pred,alpha_pred = Calc(mean_fg,cov_fg,mean_bg,cov_bg,img[y,x],0.7,alpha_init, maxCount = 50, minLike = 1e-6)
-                #fg_pred,bg_pred,alpha_pred = solve(mean_fg,cov_fg,mean_bg,cov_bg,img[y,x],0.7,alpha_init)
+                
                 
                 # storing the predicted values in appropriate windows for use for later pixels.
-                fg_actual[y, x] = fg_pred.ravel()
-                bg_actual[y, x] = bg_pred.ravel()
+                fg_actual[y, x, :] = fg_pred
+                bg_actual[y, x, :] = bg_pred
                 a_channel[y, x] = alpha_pred
+                # tag this pixle as solved to continue the search/processing
                 not_visited[i,2] = 1
                 if(np.sum(not_visited[:,2])%1000 == 0):
                     print("Solved {} out of {}.".format(np.sum(not_visited[:,2]),len(not_visited)))
@@ -263,9 +263,14 @@ def Bayesian_Matte(img,image_trimap,N = 25,sig = 8,minNeighbours = 10):
             # ChangingWindow Size
             # Preparing the gaussian weights for window
             N += 2
-            # sig += 1 
-            gaussian_weights = matlab_style_gauss2d((N,N),sig)
-            gaussian_weights /= np.max(gaussian_weights)
+            kernel_std = sig
+            kernel_size = N
+            kernel_2d = np.outer(signal.gaussian(kernel_size, std=kernel_std), signal.gaussian(kernel_size, std=kernel_std))
+            kernel_2d /= np.max(kernel_2d)
+            # Repeat the 2D kernel for each channel of the input image
+            gaussian_weights = np.tile(kernel_2d[:, :, np.newaxis], (1, 1, c))
+            print(np.shape(gaussian_weights))
+            gaussian_weights = gaussian_weights[:, :, 0]
             print(N)
 
     return a_channel,n_unknown
