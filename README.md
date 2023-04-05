@@ -1,7 +1,9 @@
 # Image matting using Bayesian theorem
 
 ## Description of the project
-This task is a group assignment for the course 5C22 Computational Methods. This assignment performs compositing on the image based on the image, trimap and background image. 
+This task is a team assignment for the course 5C22 Computational Methods. This assignment performs compositing on the image based on the image, trimap and background image.
+
+The contributors for the assignment are Xie Shuang, Aakash Revankar, and Ro Wei.
 
 ---
 
@@ -53,10 +55,10 @@ The algorithm has the following steps :
 4. The compositing algorithm merges the alpha matte and background to create the final image.
 ---
 ## Unit test
-1. A `dim_Testing` test to validate the dimensions of the input image, trimap, alpha matte and composite image.
-2. A `value_Testing` test to test the maximum and minimum value of the trimap
-3. A `test_window` test to validate whether the get window function is working clearly or not.
-4. A `test_Orchard_Bouman` test to validate the weight mean and covariances of the Orchard Boumann clustering algorithm.
+1. A `dim_Testing` test that checks the dimensions of the input image, trimap, alpha matte, and composite image for validation purposes.
+2. A `value_Testing` test that verifies the maximum and minimum values of the trimap.
+3. A `test_window` test that ensures the clear functionality of the get window function.
+4. A `test_Orchard_Bouman` test that validates the weight mean and covariances of the Orchard Boumann clustering algorithm.
 
 ## End-to-end testing
 1. The laplacian alpha matte is generated using built in laplacian function with thresholding the pixels.
@@ -65,6 +67,11 @@ The algorithm has the following steps :
 
 ## Results
 The metrics for different images is shown.
+
+Some matting results is as shown.
+<img src="1.png" >
+<img src="2.png" >
+<img src="3.png" >
 
 
 
