@@ -68,6 +68,8 @@ The algorithm has the following steps :
 ## Results
 The metrics for different images is shown.
 
+<img src= "metrics.png" width="350">
+
 Some matting results is as shown.
 <img src="1.png" >
 <img src="2.png" >

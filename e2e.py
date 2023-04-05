@@ -12,12 +12,6 @@ from laplacian import lap
 import time
 from skimage.metrics import structural_similarity as ssim
 
-# Calculating the loss
-
-
-def mse_loss(alpha, image_alpha):
-    return np.sum(np.abs(alpha/255 - image_alpha/255)**2)/(alpha.shape[0]*alpha.shape[1])
-
 
 # Reading the image
 name = "GT12"
@@ -69,6 +63,10 @@ plt.show()
 
 ###################################### End-to-End Test Start: ###########################################
 
+# Calculating the mse loss
+def mse_loss(alpha, image_alpha):
+    return np.sum(np.abs(alpha/255 - image_alpha/255)**2)/(alpha.shape[0]*alpha.shape[1])
+
 # Get the Laplacian matting output for comparison
 lap_trimap = np.array((Image.open(os.path.join(
     "data", "trimap_training_lowres", "{}.png".format(name)))))
@@ -80,8 +78,8 @@ mse_unsharpend = mse_loss(unsharped_alpha, image_alpha)
 mse_lap = mse_loss(lap_alpha, image_alpha)
 
 # Print the MSE
-print("MSE of Original Baysian matting: ", mse_original)
-print("MSE of Unsharpend Baysian matting: ", mse_unsharpend)
+print("MSE of Original Bayesian matting: ", mse_original)
+print("MSE of Unsharpend Bayesian matting: ", mse_unsharpend)
 print("MSE of Laplacian matting: ", mse_lap)
 
 # PSNR (Peak Signal-to-Noise Ratio) calculation
@@ -107,8 +105,8 @@ ssim_lap = ssim(lap_alpha, image_alpha,
                 data_range=image_alpha.max() - image_alpha.min())
 print(f"The SSIM of Laplacian is: {ssim_lap} (dB)")
 
-# Time Complexity of the Baysian matting process
-print("Baysian Time Complexity: ", (Bay_end - Bay_start)/2, "seconds")
+# Time Complexity of the Bayesian matting process
+print("Bayesian Time Complexity: ", (Bay_end - Bay_start)/2, "seconds")
 
 # Define the function to add value labels
 
@@ -119,7 +117,7 @@ def addlabels(x, y):
 
 
 # Plot the bar graph of MSE
-x = ['Original_Baysian', 'Unsharpend_Baysian', 'Laplacian']
+x = ['Original_Bayesian', 'Unsharpend_Bayesian', 'Laplacian']
 y = [mse_original, mse_unsharpend, mse_lap]
 plt.bar(x, y)
 addlabels(x, y)
@@ -130,7 +128,7 @@ plt.title('MSE of Different Matting')
 plt.show()
 
 # Plot the bar graph of PSNR
-x2 = ['Original_Baysian', 'Unsharpend_Baysian', 'Laplacian']
+x2 = ['Original_Bayesian', 'Unsharpend_Bayesian', 'Laplacian']
 y2 = [psnr_ori, psnr_unshp, psnr_lap]
 plt.bar(x2, y2)
 addlabels(x2, y2)
@@ -141,7 +139,7 @@ plt.title('PSNR of Different Matting')
 plt.show()
 
 # Plot the bar graph of SSIM
-x1 = ['Original_Baysian', 'Unsharpend_Baysian', 'Laplacian']
+x1 = ['Original_Bayesian', 'Unsharpend_Bayesian', 'Laplacian']
 y1 = [ssim_ori, ssim_unshp, ssim_lap]
 plt.bar(x1, y1)
 addlabels(x1, y1)
