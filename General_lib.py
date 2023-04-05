@@ -1,17 +1,15 @@
-import numpy as np
-from PIL import Image, ImageOps
-import matplotlib.pyplot as plt
 import cv2
-import os
+import numpy as np
+import matplotlib.pyplot as plt
 from scipy import signal
-os.system('cls')
+
 # orchard_bouman_clust.py should be in the folder
-from orchard_bouman_clust import clustFunc
+from orchard_bouman_clust import clustOBouman
 
 ## Some important helper functions
 
 # This function displays the image.
-def show_im(img):
+def disp_img(img):
     """
     img - input image should be a numpy array.
     """
@@ -177,7 +175,7 @@ def Bayesian_Matte(img,image_trimap,N = 25,sig = 8,minNeighbours = 10):
     kernel_2d = np.outer(signal.gaussian(kernel_size, std=kernel_std), signal.gaussian(kernel_size, std=kernel_std))
     kernel_2d /= np.max(kernel_2d)
     gaussian_weights = np.tile(kernel_2d[:, :, np.newaxis], (1, 1, c))
-    print(np.shape(gaussian_weights))
+    # print(np.shape(gaussian_weights))
     gaussian_weights = gaussian_weights[:, :, 0]
     ################################
     
@@ -243,8 +241,8 @@ def Bayesian_Matte(img,image_trimap,N = 25,sig = 8,minNeighbours = 10):
                     continue
                 
                 # If enough pixels, clustering to generate prior statistics for foreground and background
-                mean_fg, cov_fg = clustFunc(fg_pixels,fg_weights)
-                mean_bg, cov_bg = clustFunc(bg_pixels,bg_weights)
+                mean_fg, cov_fg = clustOBouman(fg_pixels,fg_weights)
+                mean_bg, cov_bg = clustOBouman(bg_pixels,bg_weights)
                 mask = ~np.isnan(a_window)
                 alpha_init = np.mean(a_window[mask])
                 
