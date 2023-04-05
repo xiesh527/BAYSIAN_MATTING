@@ -16,7 +16,7 @@ def mse_loss(alpha, image_alpha):
 
 
 # Defining the name of the image
-name = "GT12"
+name = "GT17"
 save_name_origin = "ORI.png"
 save_name_sharpen = "Sharpen.png"
 save_name_composite = "Comp.png"
