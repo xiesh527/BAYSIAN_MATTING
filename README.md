@@ -43,10 +43,17 @@ To run the e2e test for the file , run the following command
 python e2e.py
 ```
 
+To verify the sharpened image output, run the following command
+```sh
+python result_see.py
+```
+
 
 ---
 
 ## Algorithm design
+The mathematics, flow diagram, unit test and e2e performed is given in the powerpoint presentation in the Github.
+
 The algorithm has the following steps :
 
 1. The image, trimap, and pixels are analyzed by separating them into foreground, background, and unknown pixels.
@@ -64,6 +71,10 @@ The algorithm has the following steps :
 1. The laplacian alpha matte is generated using built in laplacian function with thresholding the pixels.
 2. The laplacian alpha matte is compared with Bayesian matte.
 3. The metrics such as MSE, PSNR and SSIM is calculated and the table is shown in the results section
+
+## Novelty addition
+1. We experimented by changing the window size parameter in the algorithm, we got images with lower MSE. But the computational  load and time complexity increases for the image.
+2. The output of the Bayesian matting alpha image was sharpened by using Gaussian blur. Some of the images had lower MSE.
 
 ## Results
 The metrics for different images is shown.

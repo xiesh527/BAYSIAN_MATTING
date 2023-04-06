@@ -26,7 +26,7 @@ os.path.join("data", "gt_training_lowres", "{}.png".format(name))
 image = np.array(Image.open(os.path.join(
     "data", "input_training_lowres", "{}.png".format(name))))
 
-# Applying unsharp mask to the image
+# Applying sharp mask to the image
 gaussian_image = cv2.GaussianBlur(image, (25, 25), 10.0)
 unsharp_image = cv2.addWeighted(image, 1.5, gaussian_image, -0.5, 0)
 
@@ -69,8 +69,8 @@ disp_img(comp_img)
 
 # Calculating the MSE
 mse_original = mse_loss(alpha, image_alpha)
-mse_unsharpend = mse_loss(unsharped_alpha, image_alpha)
+mse_sharpend = mse_loss(unsharped_alpha, image_alpha)
 
 # Displaying the MSE
 print('MSE between original and generated alpha matte :', mse_original)
-print('MSE between original and unsharpened alpha matte :', mse_unsharpend)
+print('MSE between original and unsharpened alpha matte :', mse_sharpend)
