@@ -3,7 +3,7 @@
 ## Description of the project
 This task is a team assignment for the course 5C22 Computational Methods. This assignment performs compositing on the image based on the image, trimap and background image.
 
-The contributors for the assignment are Xie Shuang, Aakash Revankar, and Ro Wei.
+The contributors for the assignment are Xie Shuang, Aakash Revankar, and Li Ruowei.
 
 ---
 
@@ -52,7 +52,7 @@ python result_see.py
 ---
 
 ## Algorithm design
-The mathematics, flow diagram, unit test and e2e performed is given in the powerpoint presentation in the Github.
+The mathematics, flow diagram, unit test and e2e performed is given in the powerpoint presentation. [Click here](https://github.com/xiesh527/BAYSIAN_MATTING/blob/main/Final_ppt_pre.pptx) for the presentation.
 
 The algorithm has the following steps :
 
@@ -70,7 +70,8 @@ The algorithm has the following steps :
 ## End-to-end testing
 1. The laplacian alpha matte is generated using built in laplacian function with thresholding the pixels.
 2. The laplacian alpha matte is compared with Bayesian matte.
-3. The metrics such as MSE, PSNR and SSIM is calculated and the table is shown in the results section
+3. The metrics such as MSE, PSNR and SSIM is calculated and the table is shown in the results section.
+4. The corresponding bar graph is shown after running the end-to-end test.
 
 ## Novelty addition
 1. We experimented by changing the window size parameter in the algorithm, we got images with lower MSE. But the computational  load and time complexity increases for the image.
