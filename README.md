@@ -19,7 +19,6 @@ pip install -r requirements.txt
 The requiremets.txt contains the following libraries:
 ```sh
 matplotlib==3.7.1
-numba==0.56.4
 numpy==1.23.5
 opencv_python==4.7.0.72
 Pillow==9.5.0
@@ -61,6 +60,7 @@ The algorithm has the following steps :
 3. The expectation maximization algorithm is applied to calculate the values of the foreground, background, and alpha.
 4. The compositing algorithm merges the alpha matte and background to create the final image.
 ---
+## BAYESIAN_VERSION_1.0
 ## Unit test
 1. A `dim_Testing` test that checks the dimensions of the input image, trimap, alpha matte, and composite image for validation purposes.
 2. A `value_Testing` test that verifies the maximum and minimum values of the trimap.
@@ -73,9 +73,12 @@ The algorithm has the following steps :
 3. The metrics such as MSE, PSNR and SSIM is calculated and the table is shown in the results section.
 4. The corresponding bar graph is shown after running the end-to-end test.
 
+## BAYESIAN_VERSION_2.0
 ## Novelty addition
-1. We experimented by changing the window size parameter in the algorithm, we got images with lower MSE. But the computational  load and time complexity increases for the image.
-2. The output of the Bayesian matting alpha image was sharpened by using Gaussian blur. Some of the images had lower MSE.
+1. A `test_image_trimap` function added to test the image and trimap are same or not by calculating energy of background pixels by calculating the mean and variance of an image.
+2. A `table.py` file created with a dictionary which has the value of the number of white pixels should be present in alpha when background energy is thresholded.
+3. The output of the Bayesian matting alpha image was sharpened by using Gaussian blur. Some of the images had lower MSE.
+4. Metrics for each image is calculated as shown in the results section.
 
 ## Results
 The metrics for different images is shown.
