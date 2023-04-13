@@ -14,8 +14,16 @@ from table import my_dict
 from alpha_prediction import segment_prediction
 
 # Reading the image 
-image = cv2.imread('data/input_training_lowres/GT01.png')
+# image = cv2.imread('data/input_training_lowres/GT01.png')
+# cv2.imread('data/input_training_lowres/GT01.png')
+# print(image.shape)
+
+# # False image resized
+image = cv2.imread('data/input_training_lowres/GT02.png')
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+image = cv2.resize(image, (800, 497))
+
+
 image_trimap = np.array(ImageOps.grayscale(Image.open(
     os.path.join("data", "trimap_training_lowres", "{}.png".format('GT01')))))
 alpha = cv2.imread('GT12_alpha.png')

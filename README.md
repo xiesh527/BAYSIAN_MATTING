@@ -73,17 +73,20 @@ The algorithm has the following steps :
 3. The metrics such as MSE, PSNR and SSIM is calculated and the table is shown in the results section.
 4. The corresponding bar graph is shown after running the end-to-end test.
 
-## BAYESIAN_VERSION_2.0
 ## Novelty addition
+1. The output of the Bayesian matting alpha image was sharpened by using Gaussian blur. Some of the images had lower MSE.
+
+## BAYESIAN_VERSION_2.0
 1. A `test_image_trimap` function added to test the image and trimap are same or not by calculating energy of background pixels by calculating the mean and variance of an image.
 2. A `table.py` file created with a dictionary which has the value of the number of white pixels should be present in alpha when background energy is thresholded.
-3. The output of the Bayesian matting alpha image was sharpened by using Gaussian blur. Some of the images had lower MSE.
-4. Metrics for each image is calculated as shown in the results section.
+3. Metrics for each image is calculated as shown in the results section.
 
 ## Results
 The metrics for different images is shown.
 
 <img src= "metrics.png" width="350">
+
+By seeing the above table we conclude that GT16 is the limit of Bayesian matting. We need to manually edit the pixels in the trimap.
 
 Some matting results is as shown.
 <img src="1.png" >
